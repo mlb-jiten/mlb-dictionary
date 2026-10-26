@@ -1,0 +1,261 @@
+
+---
+import { getCollection } from 'astro:content';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+
+import { categories } from '../../data/categories';
+
+export async function getStaticPaths() {
+    const terms = await getCollection('terms');
+
+    return Object.entries(categories).map(([id, category]) => {
+        const categoryTerms = terms
+            .filter((term) =>
+                term.data.categories.some(
+                    (categoryId) => categoryId === id
+                )
+            )
+            .map((term) => ({
+                id: term.id,
+                name: term.data.title
+                    .replace(/とは[？?]$/, '')
+                    .trim(),
+                english: term.data.english,
+                description: term.data.description,
+            }))
+            .sort((a, b) =>
+                a.name.localeCompare(b.name, 'ja')
+            );
+
+        return {
+            params: { id },
+            props: {
+                category,
+                categoryTerms,
+            },
+        };
+    });
+}
+
+const { category, categoryTerms } = Astro.props;
+---
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
+        
+<meta
+    name="description"
+    content={category.description}
+/>
+{categoryTerms.length === 0 && (
+    <meta name="robots" content="noindex, follow" />
+)}
+<title>{category.name} | MLB用語辞典</title>
+
+    </head>
+
+    <body>
+        <SiteHeader />
+
+        <main class="category-page">
+            <p class="breadcrumb">
+                <a href="/">MLB用語辞典</a>
+                <span>›</span>
+                <a href="/categories/">カテゴリ</a>
+                <span>›</span>
+                {category.name}
+            </p>
+
+            <section class="intro">
+                <p class="eyebrow">CATEGORY</p>
+                <h1>{category.name}</h1>
+                <p class="description">
+                    {category.description}
+                </p>
+                <p class="term-count">
+                    {categoryTerms.length}語
+                </p>
+            </section>
+
+            <div class="term-list">
+                {categoryTerms.map((term) => (
+                    <a
+                        class="term-item"
+                        href={`/terms/${term.id}/`}
+                    >
+                        <div class="term-heading">
+                            <h2>{term.name}</h2>
+                            {term.english && (
+                                <span class="english">
+                                    {term.english}
+                                </span>
+                            )}
+                        </div>
+
+                        <p>{term.description}</p>
+                    </a>
+                ))}
+            </div>
+
+            {categoryTerms.length === 0 && (
+                <p class="empty-message">
+                    現在、このカテゴリには用語が登録されていません。
+                </p>
+            )}
+
+            <a class="back-link" href="/categories/">
+                ← カテゴリ一覧に戻る
+            </a>
+        </main>
+        <SiteFooter />
+    </body>
+</html>
+
+<style>
+    :global(*) {
+        box-sizing: border-box;
+    }
+
+    :global(body) {
+        margin: 0;
+        background: #f6f8fb;
+        color: #172033;
+        font-family: -apple-system, BlinkMacSystemFont,
+            "Segoe UI", "Noto Sans JP", sans-serif;
+        line-height: 1.8;
+    }
+
+    .category-page {
+        width: min(1000px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 32px 0 80px;
+    }
+
+    .breadcrumb {
+        margin: 0 0 40px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .breadcrumb a {
+        color: #476b95;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        margin: 0 8px;
+    }
+
+    .intro {
+        margin-bottom: 38px;
+    }
+
+    .eyebrow {
+        margin: 0 0 14px;
+        color: #476b95;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+    }
+
+    h1 {
+        margin: 0 0 14px;
+        font-size: 38px;
+        line-height: 1.4;
+    }
+
+    .description {
+        margin: 0 0 14px;
+        color: #566176;
+    }
+
+    .term-count {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .term-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .term-item {
+        display: block;
+        padding: 26px 30px;
+        background: #ffffff;
+        border: 1px solid #dbe3ed;
+        border-radius: 12px;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .term-item:hover {
+        border-color: #8daac9;
+        background: #fafdff;
+    }
+
+    .term-heading {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .term-heading h2 {
+        margin: 0;
+        color: #17365d;
+        font-size: 21px;
+    }
+
+    .english {
+        color: #8791a1;
+        font-size: 14px;
+    }
+
+    .term-item > p {
+        margin: 12px 0 0;
+        color: #566176;
+        font-size: 15px;
+    }
+
+    .empty-message {
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 36px;
+        color: #315d89;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+        .category-page {
+            width: calc(100% - 28px);
+            padding-top: 28px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .term-item {
+            padding: 20px;
+        }
+
+        .term-heading h2 {
+            font-size: 19px;
+        }
+    }
+</style>

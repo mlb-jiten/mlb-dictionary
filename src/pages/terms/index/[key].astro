@@ -1,0 +1,358 @@
+---
+import SiteHeader from '../../../components/SiteHeader.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+    const entries = await getCollection('terms');
+
+    const kana = [
+        'あ', 'い', 'う', 'え', 'お',
+        'か', 'き', 'く', 'け', 'こ',
+        'さ', 'し', 'す', 'せ', 'そ',
+        'た', 'ち', 'つ', 'て', 'と',
+        'な', 'に', 'ぬ', 'ね', 'の',
+        'は', 'ひ', 'ふ', 'へ', 'ほ',
+        'ま', 'み', 'む', 'め', 'も',
+        'や', 'ゆ', 'よ',
+        'ら', 'り', 'る', 'れ', 'ろ',
+        'わ', 'を', 'ん',
+    ];
+
+    function getDisplayName(title: string) {
+        return title.replace(/とは[？?]$/, '').trim();
+    }
+
+    function normalizeKana(value: string) {
+        const map: Record<string, string> = {
+            'が': 'か',
+            'ぎ': 'き',
+            'ぐ': 'く',
+            'げ': 'け',
+            'ご': 'こ',
+
+            'ざ': 'さ',
+            'じ': 'し',
+            'ず': 'す',
+            'ぜ': 'せ',
+            'ぞ': 'そ',
+
+            'だ': 'た',
+            'ぢ': 'ち',
+            'づ': 'つ',
+            'で': 'て',
+            'ど': 'と',
+
+            'ば': 'は',
+            'び': 'ひ',
+            'ぶ': 'ふ',
+            'べ': 'へ',
+            'ぼ': 'ほ',
+
+            'ぱ': 'は',
+            'ぴ': 'ひ',
+            'ぷ': 'ふ',
+            'ぺ': 'へ',
+            'ぽ': 'ほ',
+
+            'ぁ': 'あ',
+            'ぃ': 'い',
+            'ぅ': 'う',
+            'ぇ': 'え',
+            'ぉ': 'お',
+
+            'ゃ': 'や',
+            'ゅ': 'ゆ',
+            'ょ': 'よ',
+
+            'っ': 'つ',
+        };
+
+        return map[value] ?? value;
+    }
+
+    function getIndexes(name: string, reading: string) {
+        const indexes = new Set<string>();
+        const firstCharacter = name.charAt(0);
+
+        if (/^[A-Za-z]$/.test(firstCharacter)) {
+            indexes.add(firstCharacter.toUpperCase());
+        }
+
+        if (/^[1-9]$/.test(firstCharacter)) {
+            indexes.add(firstCharacter);
+        }
+
+        const containsJapanese =
+            /[ぁ-んァ-ヶ一-龯々]/.test(name);
+
+        if (containsJapanese && reading) {
+            const firstReading = normalizeKana(
+                reading.trim().charAt(0)
+            );
+
+            if (kana.includes(firstReading)) {
+                indexes.add(firstReading);
+            }
+        }
+
+        return [...indexes];
+    }
+
+    const terms = entries
+        .map((entry) => ({
+            id: entry.id,
+            name: getDisplayName(entry.data.title),
+            english: entry.data.english ?? '',
+            description: entry.data.description,
+            reading: entry.data.reading,
+        }))
+        .sort((a, b) =>
+            a.reading.localeCompare(b.reading, 'ja')
+        );
+
+    const keys = new Set<string>();
+
+    for (const term of terms) {
+        for (const key of getIndexes(
+            term.name,
+            term.reading
+        )) {
+            keys.add(key);
+        }
+    }
+
+    return [...keys].map((key) => ({
+        params: { key },
+        props: {
+            key,
+            pageTerms: terms.filter((term) =>
+                getIndexes(
+                    term.name,
+                    term.reading
+                ).includes(key)
+            ),
+        },
+    }));
+}
+
+const { key, pageTerms } = Astro.props;
+---
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width"
+        />
+        <meta
+    name="description"
+    content={`「${key}」からはじまるMLB用語の一覧`}
+        />
+        <title>
+    「  {key}」からはじまる用語 | MLB用語辞典
+        </title>
+    </head>
+
+    <body>
+        <SiteHeader />
+
+        <main class="container">
+            <p class="breadcrumb">
+                <a href="/">MLB用語辞典</a>
+                <span>›</span>
+                <a href="/terms/">用語索引</a>
+                <span>›</span>
+                {key}
+            </p>
+
+        <section class="intro">
+            <p class="eyebrow">INDEX</p>
+                <h1>「{key}」からはじまる用語</h1>
+               <p class="term-count">
+            {pageTerms.length}語
+            </p>
+        </section>
+
+            <div class="term-list">
+                {pageTerms.map((term) => (
+                    <a
+                        class="term-item"
+                        href={`/terms/${term.id}/`}
+                    >
+                        <div class="term-heading">
+                            <h2>{term.name}</h2>
+
+                            {term.english && (
+                                <span class="english">
+                                    {term.english}
+                                </span>
+                            )}
+                        </div>
+
+                        <p>{term.description}</p>
+                    </a>
+                ))}
+            </div>
+
+            <p class="back-link">
+                <a href="/terms/">
+                    ← 用語索引に戻る
+                </a>
+            </p>
+        </main>
+    </body>
+</html>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #f6f8fb;
+        color: #172033;
+        font-family: -apple-system, BlinkMacSystemFont,
+            "Segoe UI", "Noto Sans JP", sans-serif;
+        line-height: 1.8;
+    }
+
+    .container {
+        width: min(900px, calc(100% - 40px));
+        margin: 0 auto;
+    }
+
+    header {
+        padding: 18px 0;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .site-title {
+        color: #17365d;
+        font-size: 20px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    main {
+        padding: 28px 0 70px;
+    }
+
+    .breadcrumb {
+        margin: 0 0 28px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .breadcrumb a {
+        color: #476b95;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        margin: 0 8px;
+    }
+
+    .intro {
+        margin-bottom: 32px;
+    }
+
+    .eyebrow {
+        margin: 0 0 6px;
+        color: #476b95;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+    }
+
+    h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+    }
+
+    .intro > p:not(.eyebrow) {
+        margin: 0;
+        color: #566176;
+    }
+
+    .term-list {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .term-item {
+        display: block;
+        padding: 22px 24px;
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .term-item:last-child {
+        border-bottom: 0;
+    }
+
+    .term-item:hover {
+        background: #f8fafc;
+    }
+
+    .term-heading {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 6px;
+    }
+
+    .term-heading h2 {
+        margin: 0;
+        color: #17365d;
+        font-size: 20px;
+    }
+
+    .english {
+        color: #8791a1;
+        font-size: 13px;
+    }
+
+    .term-item p {
+        margin: 0;
+        color: #566176;
+        font-size: 14px;
+    }
+
+    .back-link {
+        margin-top: 28px;
+    }
+
+    .back-link a {
+        color: #315d89;
+        text-decoration: none;
+    }
+
+    @media (max-width: 650px) {
+        .container {
+            width: min(100% - 28px, 900px);
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .term-item {
+            padding: 18px;
+        }
+
+        .term-heading {
+            display: block;
+        }
+
+        .english {
+            display: block;
+            margin-top: 2px;
+        }
+    }
+</style>

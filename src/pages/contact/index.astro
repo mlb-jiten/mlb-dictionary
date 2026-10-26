@@ -1,0 +1,377 @@
+
+---
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+---
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta
+            name="description"
+            content="MLB用語辞典へのお問い合わせ、記事の修正依頼、用語追加リクエストを受け付けています。"
+        />
+        <title>お問い合わせ | MLB用語辞典</title>
+    </head>
+
+    <body>
+        <SiteHeader />
+
+        <main class="container">
+            <nav class="breadcrumb" aria-label="パンくずリスト">
+                <a href="/">MLB用語辞典</a>
+                <span>›</span>
+                お問い合わせ
+            </nav>
+
+            <section class="intro">
+                <p class="eyebrow">CONTACT</p>
+                <h1>お問い合わせ</h1>
+                <p>
+                    記事内容の誤りや修正依頼、
+                    解説してほしいMLB用語のリクエストなどを
+                    受け付けています。
+                </p>
+            </section>
+
+            <section class="form-section">
+                
+    <form
+        class="contact-form"
+        action="https://formspree.io/f/mnpjrzdp"
+        method="POST"
+    >
+
+
+                    <div class="form-field">
+                        <label for="inquiry-type">
+                            お問い合わせの種類
+                            <span class="required">必須</span>
+                        </label>
+
+                        <select id="inquiry-type" name="inquiry_type" required>
+                            <option value="">選択してください</option>
+                            <option value="記事内容の誤り・修正依頼">
+                                記事内容の誤り・修正依頼
+                            </option>
+                            <option value="用語の追加リクエスト">
+                                用語の追加リクエスト
+                            </option>
+                            <option value="ご意見・ご要望">
+                                ご意見・ご要望
+                            </option>
+                            <option value="その他のお問い合わせ">
+                                その他のお問い合わせ
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">
+                            返信先メールアドレス
+                            <span class="optional">任意</span>
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="example@email.com"
+                            autocomplete="email"
+                        />
+
+                        <p class="field-help">
+                            返信を希望する場合は入力してください。
+                        </p>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="message">
+                            お問い合わせ内容
+                            <span class="required">必須</span>
+                        </label>
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="8"
+                            placeholder="お問い合わせ内容を入力してください。"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <p class="form-notice">
+                        お送りいただいた内容はサイト運営の参考にさせていただきます。
+                        すべてのお問い合わせへの返信や対応をお約束するものではありません。
+                    </p>
+
+                    
+<p class="privacy-notice">
+    お問い合わせで取得する情報については、
+    <a href="/privacy/">プライバシーポリシー</a>
+    をご確認ください。
+</p>
+
+                    <button class="submit-button" type="submit">
+                        送信する
+                    </button>
+
+
+                </form>
+            </section>
+        </main>
+
+        <SiteFooter />
+
+<script>
+    const form = document.querySelector<HTMLFormElement>('.contact-form');
+    const submitButton = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!form.reportValidity()) return;
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = '送信中...';
+        }
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('送信に失敗しました');
+            }
+
+            window.location.assign('/contact/thanks/');
+        } catch {
+            alert('送信できませんでした。時間をおいて再度お試しください。');
+
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = '送信する';
+            }
+        }
+    });
+</script>
+
+
+
+    </body>
+</html>
+
+<style>
+    :global(*) {
+        box-sizing: border-box;
+    }
+
+    :global(body) {
+        margin: 0;
+        background: #f6f8fb;
+        color: #172033;
+        font-family:
+            -apple-system, BlinkMacSystemFont, "Segoe UI",
+            "Noto Sans JP", sans-serif;
+        line-height: 1.8;
+    }
+
+    .container {
+        width: min(900px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 32px 0 80px;
+    }
+
+    .breadcrumb {
+        margin-bottom: 54px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .breadcrumb a {
+        color: #476b95;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        margin: 0 8px;
+    }
+
+    .eyebrow {
+        margin: 0 0 12px;
+        color: #476b95;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+    }
+
+    h1 {
+        margin: 0 0 24px;
+        color: #13294b;
+        font-size: 42px;
+    }
+
+    .intro > p:last-child {
+        margin-bottom: 36px;
+        color: #566176;
+        font-size: 16px;
+    }
+
+    .form-section {
+        padding: 40px;
+        background: #ffffff;
+        border: 1px solid #dbe3ed;
+        border-radius: 12px;
+    }
+
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    :global(.contact-form .form-field) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+
+    label {
+        color: #13294b;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .required,
+    .optional {
+        margin-left: 8px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .required {
+        color: #a83434;
+        background: #fff0f0;
+    }
+
+    .optional {
+        color: #64748b;
+        background: #f1f5f9;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #ccd4df;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #172033;
+        font: inherit;
+        font-size: 16px;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 180px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: 2px solid #476b95;
+        outline-offset: 2px;
+    }
+
+    .field-help {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .form-notice {
+        margin: 0;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .submit-button {
+        align-self: flex-start;
+        padding: 14px 48px;
+        border: none;
+        border-radius: 8px;
+        background: #17365d;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .submit-button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .setup-notice {
+        margin: -20px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+        .container {
+            width: calc(100% - 28px);
+            padding-top: 24px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 36px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .form-section {
+            padding: 22px 16px;
+        }
+
+        .contact-form {
+            gap: 24px;
+        }
+
+        .submit-button {
+            width: 100%;
+        }
+
+        .setup-notice {
+            margin-top: -14px;
+        }
+
+        
+.privacy-notice {
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #64748b;
+}
+
+.privacy-notice a {
+    color: #315d89;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+    }
+</style>

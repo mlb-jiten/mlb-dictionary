@@ -1,0 +1,145 @@
+
+---
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+---
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="robots" content="noindex" />
+        <title>送信完了 | MLB用語辞典</title>
+    </head>
+
+    <body>
+        <SiteHeader />
+
+        <main class="container">
+            <nav class="breadcrumb" aria-label="パンくずリスト">
+                <a href="/">MLB用語辞典</a>
+                <span>›</span>
+                <a href="/contact/">お問い合わせ</a>
+                <span>›</span>
+                送信完了
+            </nav>
+
+            <section class="thanks-card">
+                <p class="eyebrow">CONTACT</p>
+                <h1>お問い合わせを受け付けました</h1>
+
+                <p>
+                    お問い合わせありがとうございます。<br />
+                    お送りいただいた内容は、サイト運営の参考にさせていただきます。
+                </p>
+
+                <p>
+                    すべてのお問い合わせへの返信や対応を
+                    お約束するものではありませんので、ご了承ください。
+                </p>
+
+                <a class="back-button" href="/">
+                    トップページに戻る
+                </a>
+            </section>
+        </main>
+
+        <SiteFooter />
+    </body>
+</html>
+
+<style>
+    :global(*) {
+        box-sizing: border-box;
+    }
+
+    :global(body) {
+        margin: 0;
+        background: #f6f8fb;
+        color: #172033;
+        font-family: -apple-system, BlinkMacSystemFont,
+            "Segoe UI", "Noto Sans JP", sans-serif;
+        line-height: 1.8;
+    }
+
+    .container {
+        width: min(900px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 32px 0 100px;
+    }
+
+    .breadcrumb {
+        margin-bottom: 48px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .breadcrumb a {
+        color: #476b95;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        margin: 0 8px;
+    }
+
+    .thanks-card {
+        padding: 56px 48px;
+        background: #ffffff;
+        border: 1px solid #dbe3ed;
+        border-radius: 12px;
+    }
+
+    .eyebrow {
+        color: #476b95;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+    }
+
+    h1 {
+        margin: 16px 0 28px;
+        color: #13294b;
+        font-size: 32px;
+        line-height: 1.5;
+    }
+
+    .thanks-card p:not(.eyebrow) {
+        color: #566176;
+        font-size: 16px;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 28px;
+        padding: 14px 28px;
+        background: #17365d;
+        border-radius: 8px;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .back-button:hover {
+        background: #244d7c;
+    }
+
+    @media (max-width: 650px) {
+        .container {
+            width: calc(100% - 28px);
+        }
+
+        .thanks-card {
+            padding: 32px 22px;
+        }
+
+        h1 {
+            font-size: 25px;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+        }
+    }
+</style>

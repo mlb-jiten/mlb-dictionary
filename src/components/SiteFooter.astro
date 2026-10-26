@@ -1,0 +1,106 @@
+
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <a class="footer-logo" href="/">
+                MLB用語辞典
+            </a>
+
+            <nav aria-label="フッターナビゲーション">
+                <a href="/terms/">用語索引</a>
+                <a href="/categories/">カテゴリ</a>
+                <a href="/contact/">お問い合わせ</a>
+                <a href="/privacy/">プライバシーポリシー</a>
+
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© {year} MLB用語辞典</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        color: #566176;
+    }
+
+    .footer-inner {
+        width: min(1080px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 36px 0 20px;
+    }
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding-bottom: 30px;
+    }
+
+    .footer-logo {
+        color: #17365d;
+        font-size: 18px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+    }
+
+    nav a {
+        color: #566176;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    nav a:hover {
+        color: #17365d;
+        text-decoration: underline;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 18px;
+    }
+
+    .footer-bottom p {
+        margin: 0;
+        font-size: 12px;
+        color: #8791a1;
+    }
+
+    @media (max-width: 650px) {
+        .footer-inner {
+            width: calc(100% - 28px);
+            padding-top: 28px;
+        }
+
+        .footer-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+            padding-bottom: 24px;
+        }
+
+        nav {
+            gap: 12px 20px;
+        }
+
+        nav a {
+            font-size: 13px;
+        }
+    }
+</style>

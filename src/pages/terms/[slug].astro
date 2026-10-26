@@ -1,0 +1,160 @@
+
+---
+import { getCollection, render } from 'astro:content';
+import TermLayout from '../../layouts/TermLayout.astro';
+import { categories } from '../../data/categories';
+
+export async function getStaticPaths() {
+    const terms = await getCollection('terms');
+
+    const termsById = new Map(
+        terms.map((entry) => [entry.id, entry] as const)
+    );
+
+    return terms.map((term) => {
+        const categoryLinks = term.data.categories.map((id) => ({
+            name: categories[id].name,
+            href: `/categories/${id}/`,
+        }));
+
+        const relatedLinks = term.data.related.flatMap((id) => {
+            const relatedTerm = termsById.get(id);
+
+            if (!relatedTerm || relatedTerm.id === term.id) {
+                return [];
+            }
+
+            return [{
+                name: relatedTerm.data.title
+                    .replace(/とは[？?]$/, '')
+                    .trim(),
+                english: relatedTerm.data.english,
+                href: `/terms/${relatedTerm.id}/`,
+            }];
+        });
+
+        return {
+            params: { slug: term.id },
+            props: {
+                term,
+                categoryLinks,
+                relatedLinks,
+            },
+        };
+    });
+}
+
+const { term, categoryLinks, relatedLinks } = Astro.props;
+const { Content } = await render(term);
+---
+
+<TermLayout
+    title={term.data.title}
+    english={term.data.english}
+    description={term.data.description}
+    updated={term.data.updated}
+>
+    <Content />
+
+    {(categoryLinks.length > 0 || relatedLinks.length > 0) && (
+        <aside class="article-links">
+            {categoryLinks.length > 0 && (
+                <section class="link-section">
+                    <h2>カテゴリ</h2>
+
+                    <div class="category-links">
+                        {categoryLinks.map((category) => (
+                            <a href={category.href}>
+                                {category.name}
+                            </a>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {relatedLinks.length > 0 && (
+                <section class="link-section">
+                    <h2>関連用語</h2>
+
+                    <div class="related-links">
+                        {relatedLinks.map((related) => (
+                            <a href={related.href}>
+                                <strong>{related.name}</strong>
+
+                                {related.english && (
+                                    <span>{related.english}</span>
+                                )}
+                            </a>
+                        ))}
+                    </div>
+                </section>
+            )}
+        </aside>
+    )}
+</TermLayout>
+
+<style>
+    .article-links {
+        margin-top: 56px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 28px;
+    }
+
+    .link-section + .link-section {
+        margin-top: 36px;
+    }
+
+    .link-section h2 {
+        margin: 0 0 16px;
+        padding: 0;
+        border: none;
+        color: #17365d;
+        font-size: 20px;
+    }
+
+    .category-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .category-links a {
+        padding: 8px 14px;
+        border-radius: 6px;
+        background: #eaf2f9;
+        color: #214f7d;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .category-links a:hover {
+        background: #dceaf6;
+    }
+
+    .related-links {
+        display: grid;
+        gap: 10px;
+    }
+
+    .related-links a {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        padding: 16px 18px;
+        border: 1px solid #dbe3ed;
+        border-radius: 8px;
+        color: #17365d;
+        text-decoration: none;
+    }
+
+    .related-links a:hover {
+        background: #f6f9fc;
+        border-color: #8daac9;
+    }
+
+    .related-links span {
+        color: #8791a1;
+        font-size: 13px;
+    }
+</style>
