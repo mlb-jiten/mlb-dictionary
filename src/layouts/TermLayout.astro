@@ -197,4 +197,46 @@ const updatedText = updated.toLocaleDateString('ja-JP', {
     outline-offset: 3px;
 }
 
+
+/* 記事内の表 */
+.term-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 28px;
+    font-size: 15px;
+}
+
+.term-content th,
+.term-content td {
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.term-content th {
+    background: #f0f5fa;
+    font-weight: 700;
+}
+
+.term-content tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+/* スマートフォンでは横スクロール可能にする */
+@media (max-width: 600px) {
+    .term-content table {
+        display: block;
+        overflow-x: auto;
+        font-size: 14px;
+    }
+
+    .term-content th,
+    .term-content td {
+        padding: 10px 12px;
+        white-space: nowrap;
+    }
+}
+
+
 </style>
