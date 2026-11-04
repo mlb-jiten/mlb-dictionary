@@ -16,8 +16,9 @@ const categoryList = Object.entries(categories).map(([id, category]) => ({
         term.data.categories.some((categoryId) => categoryId === id)
     ).length,
 }));
----
 
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
 <html lang="ja">
     <head>
         <meta charset="utf-8" />
@@ -27,6 +28,7 @@ const categoryList = Object.entries(categories).map(([id, category]) => ({
             content="MLB用語をカテゴリ別に探せます。"
         />
         <title>カテゴリ一覧 | MLB用語辞典</title>
+        <link rel="canonical" href={canonicalURL} />
     </head>
 
     <body>

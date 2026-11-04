@@ -2,6 +2,8 @@
 ---
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <html lang="ja">
@@ -13,6 +15,7 @@ import SiteFooter from '../../components/SiteFooter.astro';
             content="MLB用語辞典へのお問い合わせ、記事の修正依頼、用語追加リクエストを受け付けています。"
         />
         <title>お問い合わせ | MLB用語辞典</title>
+        <link rel="canonical" href={canonicalURL} />
     </head>
 
     <body>

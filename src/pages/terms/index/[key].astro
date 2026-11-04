@@ -136,6 +136,8 @@ export async function getStaticPaths() {
 }
 
 const { key, pageTerms } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <html lang="ja">
@@ -150,8 +152,10 @@ const { key, pageTerms } = Astro.props;
     content={`「${key}」からはじまるMLB用語の一覧`}
         />
         <title>
-    「  {key}」からはじまる用語 | MLB用語辞典
+    「{key}」からはじまる用語 | MLB用語辞典
         </title>
+
+         <link rel="canonical" href={canonicalURL} />
     </head>
 
     <body>

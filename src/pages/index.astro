@@ -11,6 +11,8 @@ const terms = entries.map((entry) => ({
     description: entry.data.description,
     href: `/terms/${entry.id}/`,
 }));
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <html lang="ja">
@@ -24,6 +26,8 @@ const terms = entries.map((entry) => ({
     		name="description"
    			content="MLBに関する用語を分かりやすく解説する辞典です。"
 		/>
+
+		<link rel="canonical" href={canonicalURL} />
 	</head>
 
 	<body>

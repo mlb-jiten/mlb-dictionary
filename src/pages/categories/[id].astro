@@ -39,6 +39,8 @@ export async function getStaticPaths() {
 }
 
 const { category, categoryTerms } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <html lang="ja">
@@ -57,7 +59,7 @@ const { category, categoryTerms } = Astro.props;
     <meta name="robots" content="noindex, follow" />
 )}
 <title>{category.name} | MLB用語辞典</title>
-
+    <link rel="canonical" href={canonicalURL} />
     </head>
 
     <body>

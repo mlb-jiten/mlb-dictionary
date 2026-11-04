@@ -21,6 +21,9 @@ const updatedText = updated.toLocaleDateString('ja-JP', {
     month: 'long',
     day: 'numeric',
 });
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
 ---
 
 <html lang="ja">
@@ -29,6 +32,7 @@ const updatedText = updated.toLocaleDateString('ja-JP', {
         <meta name="viewport" content="width=device-width" />
         <meta name="description" content={description} />
         <title>{title} | MLB用語辞典</title>
+        <link rel="canonical" href={canonicalURL} />
     </head>
 
     <body>
